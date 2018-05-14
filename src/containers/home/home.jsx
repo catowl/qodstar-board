@@ -80,7 +80,7 @@ class Home extends Component {
       new_user_amount,
       real_user_amount,
       sum
-    ] = [];
+    ] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
     
     if (data) {
       increased_user_amount = data[0].increased_user_amount;
