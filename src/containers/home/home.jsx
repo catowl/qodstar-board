@@ -37,13 +37,25 @@ class Home extends Component {
   }
 
   componentDidMount () {
-    // axios.get('https://staging.qodstar.cn/api/v0.1/accounts/authentication/')
-    // .then(function (response) {
-    //   console.log(response);
-    // })
-    // .catch(function (error) {
-    //   console.log(error);
-    // });
+    // window.addEventListener()
+    axios({
+      method: 'get',
+      url: '/date-date_data/',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => {
+      // console.log(response);
+      if (response.status === 200) {
+        this.setState({
+          data: response.data.results
+        })
+      }
+    })
+    .catch(error => {
+      // console.log(error);
+    });;
   }
 
   handleClick = key => {
@@ -54,6 +66,35 @@ class Home extends Component {
   };
 
   render() {
+    console.log('this.state', this.state);
+    // 面板数据处理
+    let { data } = this.state;
+    let [
+      increased_user_amount,
+      jobpost_amount,
+      invitation_sent_amount,
+      sale_amount,
+      wx_page_view,
+      pc_page_view,
+      potential_user_amount,
+      new_user_amount,
+      real_user_amount,
+      sum
+    ] = [];
+    
+    if (data) {
+      increased_user_amount = data[0].increased_user_amount;
+      jobpost_amount = data[0].jobpost_amount;
+      invitation_sent_amount = data[0].invitation_sent_amount;
+      sale_amount = data[0].sale_amount;
+      wx_page_view = data[0].wx_page_view;
+      pc_page_view = data[0].pc_page_view;
+      potential_user_amount = data[0].potential_user_amount;
+      new_user_amount = data[0].new_user_amount;
+      real_user_amount = data[0].real_user_amount;
+      sum = data[0].wx_page_view + data[0].pc_page_view + data[0].potential_user_amount + data[0].new_user_amount + real_user_amount;
+    }
+
     let tabs = this.state.tabs.map((item, index) => {
       return (
         <button
@@ -70,6 +111,7 @@ class Home extends Component {
         </button>
       );
     });
+
     return (
       <div className="home">
         <header className="header">
@@ -93,7 +135,9 @@ class Home extends Component {
                 <div className="col">
                   <div className="title">
                     <span>新增企业用户</span>
-                    <h1 style={{ fontSize: "3rem", fontWeight: "bold" }}>80</h1>
+                    <h1 style={{ fontSize: "3rem", fontWeight: "bold" }}>
+                      {increased_user_amount}
+                    </h1>
                     <h6 style={{ fontSize: "0.6rem" }}>上季度: 30</h6>
                   </div>
                 </div>
@@ -101,7 +145,7 @@ class Home extends Component {
                   <div className="title">
                     <span>创建职位</span>
                     <h1 style={{ fontSize: "3rem", fontWeight: "bold" }}>
-                      488
+                      {jobpost_amount}
                     </h1>
                     <h6 style={{ fontSize: "0.6rem" }}>上季度: 55</h6>
                   </div>
@@ -110,7 +154,7 @@ class Home extends Component {
                   <div className="title">
                     <span>邀请发送</span>
                     <h1 style={{ fontSize: "3rem", fontWeight: "bold" }}>
-                      666
+                      {invitation_sent_amount}
                     </h1>
                     <h6 style={{ fontSize: "0.6rem" }}>上季度: 333</h6>
                   </div>
@@ -119,7 +163,7 @@ class Home extends Component {
                   <div className="title">
                     <span>销售额</span>
                     <h1 style={{ fontSize: "3rem", fontWeight: "bold" }}>
-                      100万
+                      {sale_amount}
                     </h1>
                     <h6 style={{ fontSize: "0.6rem" }}>上季度: 20万</h6>
                   </div>
@@ -143,28 +187,28 @@ class Home extends Component {
                         <div
                           className="progress-bar bg-primary"
                           role="progressbar"
-                          style={{ width: "60%" }}
+                          style={{ width: `${pc_page_view/sum*100}%` }}
                           aria-valuenow="0"
                           aria-valuemin="0"
                           aria-valuemax="100"
                         >
-                          60%
+                          {`${pc_page_view/sum*100}%`}
                         </div>
                       </div>
                       <div className="progress">
                         <div
                           className="progress-bar bg-info"
                           role="progressbar"
-                          style={{ width: "40%" }}
+                          style={{ width: `${wx_page_view/sum*100}%` }}
                           aria-valuenow="0"
                           aria-valuemin="0"
                           aria-valuemax="100"
                         >
-                          40%
+                          {`${wx_page_view/sum*100}%`}
                         </div>
                       </div>
                     </td>
-                    <td>5000(100%)</td>
+                    <td>{`${wx_page_view + pc_page_view}(${wx_page_view + pc_page_view/sum*100}%)`}</td>
                   </tr>
                   <tr>
                     <th scope="row">潜在用户(报名公测)</th>
@@ -172,17 +216,17 @@ class Home extends Component {
                       <div className="progress">
                         <div
                           className="progress-bar bg-warning"
-                          style={{ width: "16%" }}
+                          style={{ width: `${potential_user_amount/sum*100}%` }}
                           role="progressbar"
                           aria-valuenow="0"
                           aria-valuemin="0"
                           aria-valuemax="100"
                         >
-                          16%
+                          {`${potential_user_amount/sum*100}%`}
                         </div>
                       </div>
                     </td>
-                    <td>1500(16%)</td>
+                    <td>{`${potential_user_amount}(${potential_user_amount/sum*100}%)`}</td>
                   </tr>
                   <tr>
                     <th scope="row">新用户(已登录,创建职位)</th>
@@ -190,17 +234,17 @@ class Home extends Component {
                       <div className="progress">
                         <div
                           className="progress-bar bg-danger"
-                          style={{ width: "16%" }}
+                          style={{ width: `${new_user_amount/sum*100}%` }}
                           role="progressbar"
                           aria-valuenow="0"
                           aria-valuemin="0"
                           aria-valuemax="100"
                         >
-                          16%
+                          {`${new_user_amount/sum*100}%`}
                         </div>
                       </div>
                     </td>
-                    <td>800(16%)</td>
+                    <td>{`${new_user_amount}(${new_user_amount/sum*100}%)`}</td>
                   </tr>
                   <tr>
                     <th scope="row">真实用户(发送测试邀请)</th>
@@ -208,17 +252,17 @@ class Home extends Component {
                       <div className="progress">
                         <div
                           className="progress-bar bg-success"
-                          style={{ width: "10%" }}
+                          style={{ width: `${real_user_amount/sum*100}%` }}
                           role="progressbar"
                           aria-valuenow="0"
                           aria-valuemin="0"
                           aria-valuemax="100"
                         >
-                          10%
+                          {`${real_user_amount/sum*100}%`}
                         </div>
                       </div>
                     </td>
-                    <td>360(10%)</td>
+                    <td>{`${real_user_amount}(${real_user_amount/sum*100}%)`}</td>
                   </tr>
                 </tbody>
               </table>
