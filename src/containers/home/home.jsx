@@ -16,31 +16,31 @@ class Home extends Component {
     this.state = {
       tabs: [
         {
-          key: 1,
+          key: 0,
           title: "当月"
         },
         {
-          key: 2,
+          key: 1,
           title: "季度"
         },
         {
-          key: 3,
+          key: 2,
           title: "半年"
         },
         {
-          key: 4,
+          key: 3,
           title: "一年"
         }
       ],
-      activeKey: 1
+      activeKey: 0
     };
   }
 
-  componentDidMount () {
-    // window.addEventListener()
+  // 获取面试数据
+  fetchApi = (period) => {
     axios({
       method: 'get',
-      url: '/date-date_data/',
+      url: `/date-date_data/?period=${period}`,
       headers: {
         'Content-Type': 'application/json'
       }
@@ -58,11 +58,18 @@ class Home extends Component {
     });;
   }
 
+  componentDidMount () {
+    // window.addEventListener()
+    this.fetchApi(0);
+  }
+
+  // 切换period
   handleClick = key => {
     this.setState({
       activeKey: key
     });
-    console.log("查看this.props", this);
+    console.log("查看this.props", key);
+    this.fetchApi(key);
   };
 
   render() {
@@ -127,9 +134,9 @@ class Home extends Component {
                   <div className="title">
                     <span>主页浏览量</span>
                     <h1 style={{ fontSize: "3rem", fontWeight: "bold" }}>
-                      18万
+                      {0}
                     </h1>
-                    <h6 style={{ fontSize: "0.6rem" }}>上季度: 20万</h6>
+                    <h6 style={{ fontSize: "0.6rem" }}>{`上季度: ${0}`}</h6>
                   </div>
                 </div>
                 <div className="col">
@@ -138,7 +145,7 @@ class Home extends Component {
                     <h1 style={{ fontSize: "3rem", fontWeight: "bold" }}>
                       {increased_user_amount}
                     </h1>
-                    <h6 style={{ fontSize: "0.6rem" }}>上季度: 30</h6>
+                    <h6 style={{ fontSize: "0.6rem" }}>{`上季度: ${0}`}</h6>
                   </div>
                 </div>
                 <div className="col">
@@ -147,7 +154,7 @@ class Home extends Component {
                     <h1 style={{ fontSize: "3rem", fontWeight: "bold" }}>
                       {jobpost_amount}
                     </h1>
-                    <h6 style={{ fontSize: "0.6rem" }}>上季度: 55</h6>
+                    <h6 style={{ fontSize: "0.6rem" }}>{`上季度: ${0}`}</h6>
                   </div>
                 </div>
                 <div className="col">
@@ -156,7 +163,7 @@ class Home extends Component {
                     <h1 style={{ fontSize: "3rem", fontWeight: "bold" }}>
                       {invitation_sent_amount}
                     </h1>
-                    <h6 style={{ fontSize: "0.6rem" }}>上季度: 333</h6>
+                    <h6 style={{ fontSize: "0.6rem" }}>{`上季度: ${0}`}</h6>
                   </div>
                 </div>
                 <div className="col">
@@ -165,7 +172,7 @@ class Home extends Component {
                     <h1 style={{ fontSize: "3rem", fontWeight: "bold" }}>
                       {sale_amount}
                     </h1>
-                    <h6 style={{ fontSize: "0.6rem" }}>上季度: 20万</h6>
+                    <h6 style={{ fontSize: "0.6rem" }}>{`上季度: ${0}`}</h6>
                   </div>
                 </div>
               </div>
