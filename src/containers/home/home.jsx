@@ -32,7 +32,8 @@ class Home extends Component {
           title: "一年"
         }
       ],
-      activeKey: 0
+      activeKey: 0,
+      previous: '上个月'
     };
   }
 
@@ -40,7 +41,7 @@ class Home extends Component {
   fetchApi = (period) => {
     axios({
       method: 'get',
-      url: `/date-date_data/?period=${period}`,
+      url: `/date-data/?period=${period}`,
       headers: {
         'Content-Type': 'application/json'
       }
@@ -49,13 +50,25 @@ class Home extends Component {
       // console.log(response);
       if (response.status === 200) {
         this.setState({
-          data: response.data.results
+          data: response.data
         })
       }
     })
     .catch(error => {
       // console.log(error);
     });;
+  }
+
+  // 数据百分比处理
+  percentage = (num, den, bool) => {
+    let percentage = '';
+    if (bool) {
+      percentage = `${num}(${(num/den*100).toFixed(2)}%)`;
+    } else {
+      percentage = `${(num/den*100).toFixed(2)}%`;
+    }
+    
+    return percentage;
   }
 
   componentDidMount () {
@@ -65,8 +78,26 @@ class Home extends Component {
 
   // 切换period
   handleClick = key => {
+    let previous = '';
+    switch (key) {
+      case 0:
+        previous = '上个月';
+        break;
+      case 1:
+        previous = '上季度';
+        break;
+      case 2:
+        previous = '上半年';
+        break;
+      case 3:
+        previous = '上一年';
+        break;
+      default:
+        break;
+    }
     this.setState({
-      activeKey: key
+      activeKey: key,
+      previous
     });
     console.log("查看this.props", key);
     this.fetchApi(key);
@@ -75,7 +106,7 @@ class Home extends Component {
   render() {
     console.log('this.state', this.state);
     // 面板数据处理
-    let { data } = this.state;
+    let { data, previous } = this.state;
     let [
       increased_user_amount,
       jobpost_amount,
@@ -90,16 +121,16 @@ class Home extends Component {
     ] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
     
     if (data) {
-      increased_user_amount = data[0].increased_user_amount;
-      jobpost_amount = data[0].jobpost_amount;
-      invitation_sent_amount = data[0].invitation_sent_amount;
-      sale_amount = data[0].sale_amount;
-      wx_page_view = data[0].wx_page_view;
-      pc_page_view = data[0].pc_page_view;
-      potential_user_amount = data[0].potential_user_amount;
-      new_user_amount = data[0].new_user_amount;
-      real_user_amount = data[0].real_user_amount;
-      sum = data[0].wx_page_view + data[0].pc_page_view + data[0].potential_user_amount + data[0].new_user_amount + real_user_amount;
+      increased_user_amount = data.increased_user_amount;
+      jobpost_amount = data.jobpost_amount;
+      invitation_sent_amount = data.invitation_sent_amount;
+      sale_amount = data.sale_amount;
+      wx_page_view = data.wx_page_view;
+      pc_page_view = data.pc_page_view;
+      potential_user_amount = data.potential_user_amount;
+      new_user_amount = data.new_user_amount;
+      real_user_amount = data.real_user_amount;
+      sum = data.wx_page_view + data.pc_page_view + data.potential_user_amount + data.new_user_amount + data.real_user_amount;
     }
 
     let tabs = this.state.tabs.map((item, index) => {
@@ -136,7 +167,7 @@ class Home extends Component {
                     <h1 style={{ fontSize: "3rem", fontWeight: "bold" }}>
                       {0}
                     </h1>
-                    <h6 style={{ fontSize: "0.6rem" }}>{`上季度: ${0}`}</h6>
+                    <h6 style={{ fontSize: "0.6rem" }}>{`${previous}: ${0}`}</h6>
                   </div>
                 </div>
                 <div className="col">
@@ -145,7 +176,7 @@ class Home extends Component {
                     <h1 style={{ fontSize: "3rem", fontWeight: "bold" }}>
                       {increased_user_amount}
                     </h1>
-                    <h6 style={{ fontSize: "0.6rem" }}>{`上季度: ${0}`}</h6>
+                    <h6 style={{ fontSize: "0.6rem" }}>{`${previous}: ${0}`}</h6>
                   </div>
                 </div>
                 <div className="col">
@@ -154,7 +185,7 @@ class Home extends Component {
                     <h1 style={{ fontSize: "3rem", fontWeight: "bold" }}>
                       {jobpost_amount}
                     </h1>
-                    <h6 style={{ fontSize: "0.6rem" }}>{`上季度: ${0}`}</h6>
+                    <h6 style={{ fontSize: "0.6rem" }}>{`${previous}: ${0}`}</h6>
                   </div>
                 </div>
                 <div className="col">
@@ -163,7 +194,7 @@ class Home extends Component {
                     <h1 style={{ fontSize: "3rem", fontWeight: "bold" }}>
                       {invitation_sent_amount}
                     </h1>
-                    <h6 style={{ fontSize: "0.6rem" }}>{`上季度: ${0}`}</h6>
+                    <h6 style={{ fontSize: "0.6rem" }}>{`${previous}: ${0}`}</h6>
                   </div>
                 </div>
                 <div className="col">
@@ -172,7 +203,7 @@ class Home extends Component {
                     <h1 style={{ fontSize: "3rem", fontWeight: "bold" }}>
                       {sale_amount}
                     </h1>
-                    <h6 style={{ fontSize: "0.6rem" }}>{`上季度: ${0}`}</h6>
+                    <h6 style={{ fontSize: "0.6rem" }}>{`${previous}: ${0}`}</h6>
                   </div>
                 </div>
               </div>
@@ -194,28 +225,28 @@ class Home extends Component {
                         <div
                           className="progress-bar bg-primary"
                           role="progressbar"
-                          style={{ width: `${pc_page_view/sum*100}%` }}
+                          style={{ width: `${this.percentage(pc_page_view, sum)}` }}
                           aria-valuenow="0"
                           aria-valuemin="0"
                           aria-valuemax="100"
                         >
-                          {`${pc_page_view/sum*100}%`}
+                          {this.percentage(pc_page_view, sum)}
                         </div>
                       </div>
                       <div className="progress">
                         <div
                           className="progress-bar bg-info"
                           role="progressbar"
-                          style={{ width: `${wx_page_view/sum*100}%` }}
+                          style={{ width: `${this.percentage(wx_page_view, sum)}` }}
                           aria-valuenow="0"
                           aria-valuemin="0"
                           aria-valuemax="100"
                         >
-                          {`${wx_page_view/sum*100}%`}
+                          {this.percentage(wx_page_view, sum)}
                         </div>
                       </div>
                     </td>
-                    <td>{`${wx_page_view + pc_page_view}(${wx_page_view + pc_page_view/sum*100}%)`}</td>
+                    <td>{this.percentage(wx_page_view + pc_page_view, sum, 1)}</td>
                   </tr>
                   <tr>
                     <th scope="row">潜在用户(报名公测)</th>
@@ -223,17 +254,17 @@ class Home extends Component {
                       <div className="progress">
                         <div
                           className="progress-bar bg-warning"
-                          style={{ width: `${potential_user_amount/sum*100}%` }}
+                          style={{ width: `${this.percentage(potential_user_amount, sum)}` }}
                           role="progressbar"
                           aria-valuenow="0"
                           aria-valuemin="0"
                           aria-valuemax="100"
                         >
-                          {`${potential_user_amount/sum*100}%`}
+                          {this.percentage(potential_user_amount, sum)}
                         </div>
                       </div>
                     </td>
-                    <td>{`${potential_user_amount}(${potential_user_amount/sum*100}%)`}</td>
+                    <td>{this.percentage(potential_user_amount, sum, 1)}</td>
                   </tr>
                   <tr>
                     <th scope="row">新用户(已登录,创建职位)</th>
@@ -241,17 +272,17 @@ class Home extends Component {
                       <div className="progress">
                         <div
                           className="progress-bar bg-danger"
-                          style={{ width: `${new_user_amount/sum*100}%` }}
+                          style={{ width: `${this.percentage(new_user_amount, sum)}` }}
                           role="progressbar"
                           aria-valuenow="0"
                           aria-valuemin="0"
                           aria-valuemax="100"
                         >
-                          {`${new_user_amount/sum*100}%`}
+                          {this.percentage(new_user_amount, sum)}
                         </div>
                       </div>
                     </td>
-                    <td>{`${new_user_amount}(${new_user_amount/sum*100}%)`}</td>
+                    <td>{this.percentage(new_user_amount, sum, 1)}</td>
                   </tr>
                   <tr>
                     <th scope="row">真实用户(发送测试邀请)</th>
@@ -259,17 +290,17 @@ class Home extends Component {
                       <div className="progress">
                         <div
                           className="progress-bar bg-success"
-                          style={{ width: `${real_user_amount/sum*100}%` }}
+                          style={{ width: `${this.percentage(real_user_amount, sum)}` }}
                           role="progressbar"
                           aria-valuenow="0"
                           aria-valuemin="0"
                           aria-valuemax="100"
                         >
-                          {`${real_user_amount/sum*100}%`}
+                          {this.percentage(real_user_amount, sum)}
                         </div>
                       </div>
                     </td>
-                    <td>{`${real_user_amount}(${real_user_amount/sum*100}%)`}</td>
+                    <td>{this.percentage(real_user_amount, sum, 1)}</td>
                   </tr>
                 </tbody>
               </table>
