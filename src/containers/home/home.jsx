@@ -49,8 +49,10 @@ class Home extends Component {
     .then(response => {
       // console.log(response);
       if (response.status === 200) {
+        console.log(response.data)
         this.setState({
-          data: response.data
+          current_data: response.data.current_data,
+          last_data: response.data.last_data
         })
       }
     })
@@ -106,31 +108,42 @@ class Home extends Component {
   render() {
     console.log('this.state', this.state);
     // 面板数据处理
-    let { data, previous } = this.state;
+    let { current_data, last_data, previous } = this.state;
     let [
       increased_user_amount,
+      last_increased_user_amount,
       jobpost_amount,
+      last_jobpost_amount,
       invitation_sent_amount,
+      last_invitation_sent_amount,
       sale_amount,
+      last_sale_amount,
       wx_page_view,
       pc_page_view,
       potential_user_amount,
       new_user_amount,
       real_user_amount,
       sum
-    ] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
+    ] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1];
     
-    if (data) {
-      increased_user_amount = data.increased_user_amount;
-      jobpost_amount = data.jobpost_amount;
-      invitation_sent_amount = data.invitation_sent_amount;
-      sale_amount = data.sale_amount;
-      wx_page_view = data.wx_page_view;
-      pc_page_view = data.pc_page_view;
-      potential_user_amount = data.potential_user_amount;
-      new_user_amount = data.new_user_amount;
-      real_user_amount = data.real_user_amount;
-      sum = data.wx_page_view + data.pc_page_view + data.potential_user_amount + data.new_user_amount + data.real_user_amount;
+    if (current_data) {
+      increased_user_amount = current_data.increased_user_amount;
+      jobpost_amount = current_data.jobpost_amount;
+      invitation_sent_amount = current_data.invitation_sent_amount;
+      sale_amount = current_data.sale_amount;
+      wx_page_view = current_data.wx_page_view;
+      pc_page_view = current_data.pc_page_view;
+      potential_user_amount = current_data.potential_user_amount;
+      new_user_amount = current_data.new_user_amount;
+      real_user_amount = current_data.real_user_amount;
+      sum = current_data.wx_page_view + current_data.pc_page_view + current_data.potential_user_amount + current_data.new_user_amount + current_data.real_user_amount;
+    }
+
+    if (last_data) {
+      last_increased_user_amount = last_data.increased_user_amount;
+      last_jobpost_amount = last_data.jobpost_amount;
+      last_invitation_sent_amount = last_data.invitation_sent_amount;
+      last_sale_amount = last_data.sale_amount;
     }
 
     let tabs = this.state.tabs.map((item, index) => {
@@ -167,7 +180,7 @@ class Home extends Component {
                     <h1 style={{ fontSize: "3rem", fontWeight: "bold" }}>
                       {0}
                     </h1>
-                    <h6 style={{ fontSize: "0.6rem" }}>{`${previous}: ${0}`}</h6>
+                    <h6 style={{ fontSize: "0.6rem" }}>{`${previous}: ${null}`}</h6>
                   </div>
                 </div>
                 <div className="col">
@@ -176,7 +189,7 @@ class Home extends Component {
                     <h1 style={{ fontSize: "3rem", fontWeight: "bold" }}>
                       {increased_user_amount}
                     </h1>
-                    <h6 style={{ fontSize: "0.6rem" }}>{`${previous}: ${0}`}</h6>
+                    <h6 style={{ fontSize: "0.6rem" }}>{`${previous}: ${last_increased_user_amount}`}</h6>
                   </div>
                 </div>
                 <div className="col">
@@ -185,7 +198,7 @@ class Home extends Component {
                     <h1 style={{ fontSize: "3rem", fontWeight: "bold" }}>
                       {jobpost_amount}
                     </h1>
-                    <h6 style={{ fontSize: "0.6rem" }}>{`${previous}: ${0}`}</h6>
+                    <h6 style={{ fontSize: "0.6rem" }}>{`${previous}: ${last_jobpost_amount}`}</h6>
                   </div>
                 </div>
                 <div className="col">
@@ -194,7 +207,7 @@ class Home extends Component {
                     <h1 style={{ fontSize: "3rem", fontWeight: "bold" }}>
                       {invitation_sent_amount}
                     </h1>
-                    <h6 style={{ fontSize: "0.6rem" }}>{`${previous}: ${0}`}</h6>
+                    <h6 style={{ fontSize: "0.6rem" }}>{`${previous}: ${last_invitation_sent_amount}`}</h6>
                   </div>
                 </div>
                 <div className="col">
@@ -203,7 +216,7 @@ class Home extends Component {
                     <h1 style={{ fontSize: "3rem", fontWeight: "bold" }}>
                       {sale_amount}
                     </h1>
-                    <h6 style={{ fontSize: "0.6rem" }}>{`${previous}: ${0}`}</h6>
+                    <h6 style={{ fontSize: "0.6rem" }}>{`${previous}: ${last_sale_amount}`}</h6>
                   </div>
                 </div>
               </div>
